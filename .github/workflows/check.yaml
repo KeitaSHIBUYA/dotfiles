@@ -3,6 +3,7 @@ name: Check install script
 on: [push]
 
 jobs:
+  # Ubuntu 環境での動作確認
   ubuntu:
     runs-on: ubuntu-latest
     container: ubuntu:latest
@@ -12,6 +13,14 @@ jobs:
         run: apt-get update && apt-get install -y git sudo
       - name: Install dotfiles
         run: |
-          sed -i '1s/^.*$/#!\/bin\/bash/' ./bin/install.sh
-          cat ./bin/install.sh
           bash ./bin/install.sh
+
+  # macOS 環墨での動作確認
+  macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install dotfiles
+        run: |
+          uname -a
+          ./bin/install.sh
