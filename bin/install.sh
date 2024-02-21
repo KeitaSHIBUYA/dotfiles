@@ -1,13 +1,14 @@
 #!/bin/zsh
 
-# dotfiles/ で実行すること
-DOTFILES_DIR=./
+# dotfiles/ のパスを DOTFILES_DIR に代入
+DOTFILES_DIR=`pwd`
 
 echo "Starting to create symbolic links for dotfiles..."
 
 # "."から始まるファイルをシンボリックリンク
-for file in $(find $DOTFILES_DIR -name ".*" -type f); do
-  ln -snf $file ~/ || exit 1
+# .DS_Store と .gitignore は除外
+for file in $(find $DOTFILES_DIR -name ".*" -type f | grep -v -e "\.DS_Store$" -e "\.gitignore$"); do
+  ln -snf $file ~/
 done
 
 # iceberg.vimをシンボリックリンク
