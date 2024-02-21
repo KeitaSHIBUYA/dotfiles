@@ -13,7 +13,8 @@ jobs:
         run: apt-get update && apt-get install -y git sudo
       - name: Install dotfiles
         run: |
-          bash ./bin/install.sh
+          bash ./bin/install.sh \
+          && ls -la ~/ | grep .zshrc
 
   # macOS 環墨での動作確認
   macos:
@@ -23,4 +24,5 @@ jobs:
       - name: Install dotfiles
         run: |
           uname -a
-          ./bin/install.sh
+          ./bin/install.sh \
+          && ls -la ~/ | grep .zshrc
