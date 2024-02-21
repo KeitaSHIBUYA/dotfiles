@@ -1,0 +1,28 @@
+name: Check install script
+
+on: [push]
+
+jobs:
+  # Ubuntu 環境での動作確認
+  ubuntu:
+    runs-on: ubuntu-latest
+    container: ubuntu:latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install required packages
+        run: apt-get update && apt-get install -y git sudo
+      - name: Install dotfiles
+        run: |
+          bash ./bin/install.sh \
+          && ls -la ~/ | grep .zshrc
+
+  # macOS 環墨での動作確認
+  macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install dotfiles
+        run: |
+          uname -a
+          ./bin/install.sh \
+          && ls -la ~/ | grep .zshrc
