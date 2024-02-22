@@ -18,6 +18,7 @@ jobs:
       - name: Install dotfiles
         run: |
           echo $SHELL
+          chmod +x ./bin/ubuntu_install.sh \
           yes | ./bin/ubuntu_install.sh \
           && ls -la ~/ | grep .zshrc
 
