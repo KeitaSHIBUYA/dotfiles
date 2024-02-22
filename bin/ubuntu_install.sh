@@ -2,7 +2,8 @@
 
 # ./bin/packages.list に記述されたパッケージをインストール
 sudo apt-get update || exit 1
-sudo apt-get install -y $(cat ./bin/packages.list) || exit 1
+sudo apt-get install -y $(cat ./bin/packages.list)
+sudo apt-get list --installed | grep -e "zsh" -e "curl" -e "git" -e "vim"
 
 # zshがインストールされているかチェック
 if ! command -v zsh &> /dev/null; then
