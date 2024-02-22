@@ -8,7 +8,7 @@ if ! command -v zsh &> /dev/null; then
         case $answer in
             [Yy]* ) 
                 sudo apt-get update || exit 1
-                sudo apt-get install -y zsh || exit 1
+                sudo apt-get install -y zsh curl || exit 1
                 break;;
             [Nn]* ) 
                 echo "zsh installation skipped."
