@@ -1,4 +1,4 @@
-name: Check install script
+name: Check install script on Ubuntu and macOS
 
 # feature/* ブランチへの Push 時に実行
 on:
@@ -6,18 +6,21 @@ on:
     branches:
       - feature/*
 
-jobs:
-  # Ubuntu 環境での動作確認
+  # ARM64 の Ubuntu 環境での動作確認
   ubuntu:
-    runs-on: ubuntu-latest
-    container: ubuntu:latest
+    runs-on: ubuntu-22.04
+    container: ubuntu:22.04
     steps:
-      - uses: actions/checkout@v1
+      - name: Checkout repository
+        uses: actions/checkout@v1
+
       - name: Install required packages
         run: apt-get update && apt-get install -y git sudo
+
       - name: Install dotfiles
         run: |
           echo $SHELL
+          uname -a
           yes | ./bin/ubuntu_install.sh \
           && ls -la ~/ | grep .zshrc
 
@@ -25,7 +28,9 @@ jobs:
   macos:
     runs-on: macos-14
     steps:
-      - uses: actions/checkout@v1
+      - name: Checkout repository
+        uses: actions/checkout@v1
+
       - name: Install dotfiles
         run: |
           yes | ./bin/mac_install.sh \

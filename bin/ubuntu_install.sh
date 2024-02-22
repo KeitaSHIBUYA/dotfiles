@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# ./bin/packages.list に記述されたパッケージをインストール
+sudo apt-get update || exit 1
+sudo apt-get install -y $(cat ./bin/packages.list)
+sudo apt-get list --installed | grep -e "zsh" -e "curl" -e "git" -e "vim"
+
 # zshがインストールされているかチェック
 if ! command -v zsh &> /dev/null; then
     echo "zsh is not installed. Would you like to install it now? (y/n)"
