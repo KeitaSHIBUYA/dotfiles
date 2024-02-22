@@ -7,7 +7,7 @@ if ! command -v starship &>/dev/null; then
         read -r answer
         case $answer in
             [Yy]* ) 
-                curl -sS https://starship.rs/install.sh
+                curl -sS https://starship.rs/install.sh || exit 1
                 # echo 'eval "$(starship init zsh)"' >> ~/.zshrc    # .zshrcに記述済み
                 break;;
             [Nn]* ) 
