@@ -1,4 +1,4 @@
-name: Check install script on arm64-Ubuntu and macOS
+name: Check install script on Ubuntu and macOS
 
 # feature/* ブランチへの Push 時に実行
 on:
@@ -9,15 +9,11 @@ on:
 jobs:
   # ARM64 の Ubuntu 環境での動作確認
   ubuntu:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+    container: ubuntu:22.04
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: linux/arm64
+        uses: actions/checkout@v1
 
       - name: Install required packages
         run: apt-get update && apt-get install -y git sudo
@@ -34,8 +30,7 @@ jobs:
     runs-on: macos-14
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-
+        uses: actions/checkout@v1
       - name: Install dotfiles
         run: |
           yes | ./bin/mac_install.sh \
