@@ -17,7 +17,8 @@ jobs:
         run: apt-get update && apt-get install -y git sudo
       - name: Install dotfiles
         run: |
-          bash ./bin/install.sh \
+          echo $SHELL
+          yes | ./bin/ubuntu_install.sh \
           && ls -la ~/ | grep .zshrc
 
   # macOS 環墨での動作確認
@@ -27,6 +28,6 @@ jobs:
       - uses: actions/checkout@v1
       - name: Install dotfiles
         run: |
-          uname -a
-          ./bin/install.sh \
+          # ./bin/mac_install.sh \
+          yes | ./bin/mac_install.sh \
           && ls -la ~/ | grep .zshrc
