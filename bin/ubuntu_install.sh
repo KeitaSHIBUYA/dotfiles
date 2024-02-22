@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# ./bin/packages.list に記述されたパッケージをインストール
+sudo apt-get update || exit 1
+sudo apt-get install -y $(cat ./bin/packages.list) || exit 1
+sudo apt-get upgrade -y || exit 1
+
 # zshがインストールされているかチェック
 if ! command -v zsh &> /dev/null; then
     echo "zsh is not installed. Would you like to install it now? (y/n)"
