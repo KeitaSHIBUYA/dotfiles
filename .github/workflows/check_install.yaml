@@ -6,7 +6,6 @@ on:
     branches:
       - feature/*
 
-jobs:
   # ARM64 の Ubuntu 環境での動作確認
   ubuntu:
     runs-on: ubuntu-22.04
@@ -31,6 +30,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v1
+
       - name: Install dotfiles
         run: |
           yes | ./bin/mac_install.sh \
