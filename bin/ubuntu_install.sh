@@ -7,8 +7,8 @@ if ! command -v zsh &> /dev/null; then
         read -r answer
         case $answer in
             [Yy]* ) 
-                sudo apt update
-                sudo apt install -y zsh
+                sudo apt-get update || exit 1
+                sudo apt-get install -y zsh || exit 1
                 break;;
             [Nn]* ) 
                 echo "zsh installation skipped."
@@ -24,7 +24,7 @@ fi
 # デフォルトシェルをzshに切り替え
 if [ "$SHELL" != "/bin/zsh" ]; then
     echo "Switching default shell to zsh..."
-    chsh -s /bin/zsh
+    chsh -s /bin/zsh || exit 1
     echo "You may need to log out and log back in for the changes to take effect."
 else
     echo "Default shell is already zsh."
@@ -37,7 +37,7 @@ if ! command -v starship &>/dev/null; then
         read -r answer
         case $answer in
             [Yy]* ) 
-                curl -sS https://starship.rs/install.sh | bash
+                curl -sS https://starship.rs/install.sh || exit 1
                 # echo 'eval "$(starship init zsh)"' >> ~/.zshrc    # .zshrcに記述済み
                 break;;
             [Nn]* ) 
