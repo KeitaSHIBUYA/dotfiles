@@ -221,7 +221,7 @@ export LSCOLORS=cxfxcxdxbxegedabagacad
 alias list='ls'
 alias l='exa --icons'
 alias la='exa -a --icons'
-alias ll='exa --header --git --time-style=long-iso -agl'
+alias ll='exa --icons --header --git --time-style=long-iso -agl'
 alias li='exa --icons -T -L 2 -a'
 
 ### batコマンドをcatにエイリアス
