@@ -8,7 +8,7 @@ if ! command -v starship &>/dev/null; then
         case $answer in
             [Yy]* ) 
                 curl -sS https://starship.rs/install.sh | bash
-                echo 'eval "$(starship init zsh)"' >> ~/.zshrc
+                # echo 'eval "$(starship init zsh)"' >> ~/.zshrc    # .zshrcに記述済み
                 break;;
             [Nn]* ) 
                 echo "starship installation skipped."
