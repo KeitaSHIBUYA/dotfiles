@@ -1,6 +1,10 @@
 name: Check install script
 
-on: [push]
+# feature/* ブランチへの Push 時に実行
+on:
+  push:
+    branches:
+      - feature/*
 
 jobs:
   # Ubuntu 環境での動作確認
