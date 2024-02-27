@@ -213,6 +213,108 @@ source "$HOME/.rye/env"
 ########################################
 
 ########################################
+# export
+########################################
+
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+export PATH="/Users/shibuya.keita/.rd/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
+
+# LS_COLORS
+export LSCOLORS=cxfxcxdxbxegedabagacad
+
+# tfenv
+export PATH=$PATH:[パス]/.tfenv/bin
+# Cloud SDK
+export PATH="/opt/homebrew/share/google-cloud-sdk/bin:$PATH"
+export CLOUDSDK_PYTHON_SITEPACKAGES=1
+# Go のパスを通す
+export PATH=$PATH:/usr/local/go/bin
+export PATH="$HOME/go/bin:$PATH"
+# Homebrew
+export PATH="/opt/homebrew/opt/curl/bin:$PATH"
+# Poetry
+export PATH="/Users/shibuya.keita/.local/bin:$PATH"
+# pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
+########################################
+# /export
+########################################
+
+########################################
+# alias
+########################################
+
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+alias mkdir='mkdir -p'
+ 
+# sudo の後のコマンドでエイリアスを有効にする
+alias sudo='sudo '
+ 
+alias -g L='| less'
+alias -g G='| grep'
+
+# alias ls='ls -GF'     # 元々これだった
+alias list='ls'
+alias l='exa --icons'
+alias la='exa -a --icons'
+alias ll='exa --icons --header --git --time-style=long-iso -agl'
+alias li='exa --icons -T -L 2 -a'
+
+# batコマンドをcatにエイリアス
+alias cat=bat
+
+# git
+alias g="git"
+alias gg="git la"
+alias push="git push origin HEAD"
+alias pull="git pull -p"
+alias mkpr="git push origin HEAD && gh pr create && gh pr view --web"
+alias t="tig"
+alias ta="tig --all"
+alias gr='anyframe-widget-cd-ghq-repository'
+alias gc='anyframe-widget-checkout-git-branch'
+alias gd='delete-branch-incremental-search'
+alias pr='gh pr list | fzf | awk '\''{$1=$1};1'\'' | sed -e '\''s/ .*//'\'' | {read n} && gh pr view $n -w'
+
+# docker
+alias d="docker"
+
+# terraform
+alias tf='terraform'
+alias tfp='terraform plan'
+alias tfa='terraform apply'
+
+# 画面解像度 出力
+alias resolution='system_profiler SPDisplaysDataType G Resolution'
+
+# tree
+# alias tree-a="tree -a -I "\.DS_Store|\.git|\.venv|\.vscode|\.pytest_cache|\__pycache__" -N"
+
+
+# C で標準出力をクリップボードにコピーする
+# mollifier delta blog : http://mollifier.hatenablog.com/entry/20100317/p1
+if which pbcopy >/dev/null 2>&1 ; then
+    # Mac
+    alias -g C='| pbcopy'
+elif which xsel >/dev/null 2>&1 ; then
+    # Linux
+    alias -g C='| xsel --input --clipboard'
+elif which putclip >/dev/null 2>&1 ; then
+    # Cygwin
+    alias -g C='| putclip'
+fi
+
+########################################
+# /alias
+########################################
+
+########################################
 # functions
 ########################################
 
@@ -307,101 +409,4 @@ add-zsh-hook precmd _update_vcs_info_msg
 
 ########################################
 # /functions
-########################################
-
-########################################
-# export
-########################################
-
-### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-export PATH="/Users/shibuya.keita/.rd/bin:$PATH"
-### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
-
-# LS_COLORS
-export LSCOLORS=cxfxcxdxbxegedabagacad
-
-# tfenv
-export PATH=$PATH:[パス]/.tfenv/bin
-# Cloud SDK
-export PATH="/opt/homebrew/share/google-cloud-sdk/bin:$PATH"
-export CLOUDSDK_PYTHON_SITEPACKAGES=1
-# Go のパスを通す
-export PATH=$PATH:/usr/local/go/bin
-export PATH="$HOME/go/bin:$PATH"
-# Homebrew
-export PATH="/opt/homebrew/opt/curl/bin:$PATH"
-
-########################################
-# /export
-########################################
-
-
-########################################
-# alias
-########################################
-
-alias rm='rm -i'
-alias cp='cp -i'
-alias mv='mv -i'
-alias mkdir='mkdir -p'
- 
-# sudo の後のコマンドでエイリアスを有効にする
-alias sudo='sudo '
- 
-alias -g L='| less'
-alias -g G='| grep'
-
-# alias ls='ls -GF'     # 元々これだった
-alias list='ls'
-alias l='exa --icons'
-alias la='exa -a --icons'
-alias ll='exa --icons --header --git --time-style=long-iso -agl'
-alias li='exa --icons -T -L 2 -a'
-
-# batコマンドをcatにエイリアス
-alias cat=bat
-
-# git
-alias g="git"
-alias gg="git la"
-alias push="git push origin HEAD"
-alias pull="git pull -p"
-alias mkpr="git push origin HEAD && gh pr create && gh pr view --web"
-alias t="tig"
-alias ta="tig --all"
-alias gr='anyframe-widget-cd-ghq-repository'
-alias gc='anyframe-widget-checkout-git-branch'
-alias gd='delete-branch-incremental-search'
-alias pr='gh pr list | fzf | awk '\''{$1=$1};1'\'' | sed -e '\''s/ .*//'\'' | {read n} && gh pr view $n -w'
-
-# docker
-alias d="docker"
-
-# terraform
-alias tf='terraform'
-alias tfp='terraform plan'
-alias tfa='terraform apply'
-
-# 画面解像度 出力
-alias resolution='system_profiler SPDisplaysDataType G Resolution'
-
-# tree
-alias tree-a="tree -a -I "\.DS_Store|\.git|\.venv|\.vscode|\.pytest_cache|\__pycache__" -N"
-
-
-# C で標準出力をクリップボードにコピーする
-# mollifier delta blog : http://mollifier.hatenablog.com/entry/20100317/p1
-if which pbcopy >/dev/null 2>&1 ; then
-    # Mac
-    alias -g C='| pbcopy'
-elif which xsel >/dev/null 2>&1 ; then
-    # Linux
-    alias -g C='| xsel --input --clipboard'
-elif which putclip >/dev/null 2>&1 ; then
-    # Cygwin
-    alias -g C='| putclip'
-fi
-
-########################################
-# /alias
 ########################################
