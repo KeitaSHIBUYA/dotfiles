@@ -233,12 +233,6 @@ export PATH=$PATH:/usr/local/go/bin
 export PATH="$HOME/go/bin:$PATH"
 # Homebrew
 export PATH="/opt/homebrew/opt/curl/bin:$PATH"
-# Poetry
-export PATH="/Users/shibuya.keita/.local/bin:$PATH"
-# pyenv
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
 
 ########################################
 # /export
