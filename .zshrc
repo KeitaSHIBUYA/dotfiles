@@ -175,22 +175,6 @@ source ~/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 eval "$(starship init zsh)"
 
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/Users/shibuya.keita/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/Users/shibuya.keita/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/Users/shibuya.keita/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/Users/shibuya.keita/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
-
 # cloud-sql-proxy のエイリアス
 # alias cloud_sql_proxy="/opt/homebrew/share/google-cloud-sdk/bin/cloud_sql_proxy"
 
@@ -206,6 +190,9 @@ TIMEFMT=$'\n\n========================\nProgram : %J\nCPU     : %P\nuser    : %*
 
 # rye
 source "$HOME/.rye/env"
+
+# direnv
+eval "$(direnv hook zsh)"
 
 
 ########################################
@@ -233,6 +220,11 @@ export PATH=$PATH:/usr/local/go/bin
 export PATH="$HOME/go/bin:$PATH"
 # Homebrew
 export PATH="/opt/homebrew/opt/curl/bin:$PATH"
+# virtualenv
+export PATH="/opt/homebrew/bin/virtualenv:$PATH"
+
+# direnv
+export EDITOR=code
 
 ########################################
 # /export
@@ -255,10 +247,10 @@ alias -g G='| grep'
 
 # alias ls='ls -GF'     # 元々これだった
 alias list='ls'
-alias l='exa --icons'
-alias la='exa -a --icons'
-alias ll='exa --icons --header --git --time-style=long-iso -agl'
-alias li='exa --icons -T -L 2 -a'
+alias l='eza --icons'
+alias la='eza -a --icons'
+alias ll='eza --icons --header --git --time-style=long-iso -agl'
+alias li='eza --icons -T -L 2 -a'
 
 # batコマンドをcatにエイリアス
 alias cat=bat
