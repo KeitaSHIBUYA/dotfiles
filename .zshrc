@@ -135,15 +135,15 @@ esac
 #=============================
 # source zsh-syntax-highlighting
 #=============================
-if [ -f ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
-  source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+if [ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
 #=============================
 # source zsh-autosuggestions
 #=============================
-if [ -f ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
-  source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+if [ -f /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
+  source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 fi
 
 #=============================
@@ -151,6 +151,13 @@ fi
 #=============================
 if [ -f ~/.zsh/zsh-completions/zsh-completions.zsh ]; then
   source ~/.zsh/zsh-completions/zsh-completions.zsh
+fi
+
+if type brew &>/dev/null; then
+  FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
+
+  autoload -Uz compinit
+  compinit
 fi
 
 #=============================
@@ -167,11 +174,7 @@ if [ -f ~/.zsh/spaceship-prompt/spaceship-prompt.zsh ]; then
   source ~/.zsh/spaceship-prompt/spaceship-prompt.zsh
 fi
 
-
-# autoload -U promptinit; promptinit
-# prompt pure
-source ~/.zsh-autosuggestions/zsh-autosuggestions.zsh
-source ~/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# Starship
 eval "$(starship init zsh)"
 
 
