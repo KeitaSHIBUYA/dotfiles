@@ -1,7 +1,6 @@
 tap "emqx/mqttx"
 tap "hashicorp/tap"
 tap "homebrew/bundle"
-tap "homebrew/cask-fonts"
 tap "homebrew/services"
 tap "teamookla/speedtest"
 brew "asdf"

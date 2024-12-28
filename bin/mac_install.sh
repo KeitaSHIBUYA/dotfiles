@@ -63,3 +63,7 @@ mkdir -p ~/.config || exit 1
 ln -snf $DOTFILES_DIR/.config/starship.toml ~/.config/ || exit 1
 
 echo "Successfully created symbolic links for dotfiles."
+
+# Brewfile から brew bundle を実行
+cd ~
+brew bundle --global || exit 1
