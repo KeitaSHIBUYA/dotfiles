@@ -64,6 +64,19 @@ ln -snf $DOTFILES_DIR/.config/starship.toml ~/.config/ || exit 1
 
 echo "Successfully created symbolic links for dotfiles."
 
+# CI 実行時はここまでで終了する
+# ユーザ入力を待機し、"y" の入力があれば正常終了する
+
+while true; do
+    echo "Would 'not' you like to install Homebrew packages? (y/n)"
+    read -r answer
+    case $answer in
+        [Yy]* ) exit 0;;
+        [Nn]* ) break;;
+        * ) echo "Please answer 'y' or 'n'.";;
+    esac
+done
+
 # Brewfile から brew bundle を実行
 cd ~
 brew update
