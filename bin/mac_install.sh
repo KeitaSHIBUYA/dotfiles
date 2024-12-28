@@ -66,4 +66,6 @@ echo "Successfully created symbolic links for dotfiles."
 
 # Brewfile から brew bundle を実行
 cd ~
-brew bundle --global || exit 1
+brew update
+brew upgrade
+brew bundle --global
