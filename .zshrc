@@ -186,9 +186,6 @@ eval "$(starship init zsh)"
 # source ~/app/zsh-snap/znap.zsh
 # znap source marlonrichert/zsh-autocomplete
 
-
-. /opt/homebrew/opt/asdf/libexec/asdf.sh
-
 TIMEFMT=$'\n\n========================\nProgram : %J\nCPU     : %P\nuser    : %*Us\nsystem  : %*Ss\ntotal   : %*Es\n========================\n'
 
 # rye
