@@ -2,260 +2,171 @@
 # default
 ########################################
 
-export PATH=/opt/homebrew/bin:$PATH
-# 環境変数
+# -----------------------------
+# Environment Variables & PATH
+# -----------------------------
 export LANG=ja_JP.UTF-8
 
-# 色を使用出来るようにする
-autoload -Uz colors
-colors
+# Homebrew
+export PATH="/opt/homebrew/bin:$PATH"
+export PATH="/opt/homebrew/sbin:$PATH"
 
-# emacs 風キーバインドにする
-bindkey -e
+# Go
+export PATH=$PATH:/usr/local/go/bin
+export PATH="$HOME/go/bin:$PATH"
 
-# ヒストリの設定
-HISTFILE=~/.zsh_history
-HISTSIZE=1000000
-SAVEHIST=1000000
+# Cloud SDK
+export PATH="/opt/homebrew/share/google-cloud-sdk/bin:$PATH"
+export CLOUDSDK_PYTHON_SITEPACKAGES=1
 
-# 改変箇所_1
-# 時間表記の追加
-setopt extended_history
-alias history='history -t "%F %T"'
-
-# プロンプト
-# 1行表示
-# PROMPT="%~ %# "
-
-# 改変箇所_2
-PROMPT="%{${fg[blue]}%}%n:%{${reset_color}%} %c/ %# "
-# 2行表示
-# PROMPT="%{${fg[green]}%}[%n@%m]%{${reset_color}%} %~
-# %# " 
-
-# 単語の区切り文字を指定する
-autoload -Uz select-word-style
-select-word-style default
-# ここで指定した文字は単語区切りとみなされる
-# / も区切りと扱うので、^W でディレクトリ１つ分を削除できる
-zstyle ':zle:*' word-chars " /=;@:{},|"
-zstyle ':zle:*' word-style unspecified
-
-########################################
-# 補完
-# 補完機能を有効にする
-autoload -Uz compinit
-compinit
-
-# 補完で小文字でも大文字にマッチさせる
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-
-# ../ の後は今いるディレクトリを補完しない
-zstyle ':completion:*' ignore-parents parent pwd ..
-
-# sudo の後ろでコマンド名を補完する
-zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
-                   /usr/sbin /usr/bin /sbin /bin /usr/X11R6/bin
-
-# ps コマンドのプロセス名補完
-zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
-
-########################################
-# vcs_info
-autoload -Uz vcs_info
-autoload -Uz add-zsh-hook
-
-zstyle ':vcs_info:*' formats '%F{green}(%s)-[%b]%f'
-zstyle ':vcs_info:*' actionformats '%F{red}(%s)-[%b|%a]%f'
-
-########################################
-# オプション
-# 日本語ファイル名を表示可能にする
-setopt print_eight_bit
-
-# beep を無効にする
-setopt no_beep
-
-# フローコントロールを無効にする
-setopt no_flow_control
-
-# Ctrl+Dでzshを終了しない
-setopt ignore_eof
-
-# '#' 以降をコメントとして扱う
-setopt interactive_comments
-
-# ディレクトリ名だけでcdする
-setopt auto_cd
-
-# cd したら自動的にpushdする
-setopt auto_pushd
-# 重複したディレクトリを追加しない
-setopt pushd_ignore_dups
-
-# 同時に起動したzshの間でヒストリを共有する
-setopt share_history
-
-# 同じコマンドをヒストリに残さない
-setopt hist_ignore_all_dups
-
-# スペースから始まるコマンド行はヒストリに残さない
-setopt hist_ignore_space
-
-# ヒストリに保存するときに余分なスペースを削除する
-setopt hist_reduce_blanks
-
-# 高機能なワイルドカード展開を使用する
-setopt extended_glob
-
-########################################
-# キーバインド
-
-# ^R で履歴検索をするときに * でワイルドカードを使用出来るようにする
-bindkey '^R' history-incremental-pattern-search-backward
-
-########################################
-# OS 別の設定
-case ${OSTYPE} in
-    darwin*)
-        #Mac用の設定
-        export CLICOLOR=1
-        alias ls='ls -G -F'
-        ;;
-    linux*)
-        #Linux用の設定
-        alias ls='ls -F --color=auto'
-        ;;
-esac
-
-
-# vim:set ft=zsh:
-
-
-#=============================
-# source zsh-syntax-highlighting
-#=============================
-if [ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
-  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-fi
-
-#=============================
-# source zsh-autosuggestions
-#=============================
-if [ -f /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
-  source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-fi
-
-#=============================
-# source zsh-completions
-#=============================
-if [ -f ~/.zsh/zsh-completions/zsh-completions.zsh ]; then
-  source ~/.zsh/zsh-completions/zsh-completions.zsh
-fi
-
-if type brew &>/dev/null; then
-  FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
-
-  autoload -Uz compinit
-  compinit
-fi
-
-#=============================
-# source zsh-history-substring-search
-#=============================
-if [ -f ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh ]; then
-  source ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
-fi
-
-#=============================
-# source spaceship-prompt
-#=============================
-if [ -f ~/.zsh/spaceship-prompt/spaceship-prompt.zsh ]; then
-  source ~/.zsh/spaceship-prompt/spaceship-prompt.zsh
-fi
-
-# Starship
-eval "$(starship init zsh)"
-
-
-# cloud-sql-proxy のエイリアス
-# alias cloud_sql_proxy="/opt/homebrew/share/google-cloud-sdk/bin/cloud_sql_proxy"
-
-
-# znap
-# source ~/app/zsh-snap/znap.zsh
-# znap source marlonrichert/zsh-autocomplete
-
-TIMEFMT=$'\n\n========================\nProgram : %J\nCPU     : %P\nuser    : %*Us\nsystem  : %*Ss\ntotal   : %*Es\n========================\n'
-
-# rye
-source "$HOME/.rye/env"
-
-# direnv
-eval "$(direnv hook zsh)"
-
-
-########################################
-# /default
-########################################
-
-########################################
-# export
-########################################
-
+# Rancher Desktop (Managed Block)
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
 export PATH="/Users/shibuya.keita/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
 
-# LS_COLORS
+# Other Tools
+export PATH="/opt/homebrew/opt/curl/bin:$PATH"
+export PATH="/opt/homebrew/bin/virtualenv:$PATH"
+# Note: Removed redundant tfenv path as it is usually in homebrew bin
+
+export EDITOR=code
+export CLICOLOR=1
 export LSCOLORS=cxfxcxdxbxegedabagacad
 
-# tfenv
-export PATH=$PATH:[パス]/.tfenv/bin
-# Cloud SDK
-export PATH="/opt/homebrew/share/google-cloud-sdk/bin:$PATH"
-export CLOUDSDK_PYTHON_SITEPACKAGES=1
-# Go のパスを通す
-export PATH=$PATH:/usr/local/go/bin
-export PATH="$HOME/go/bin:$PATH"
-# Homebrew
-export PATH="/opt/homebrew/opt/curl/bin:$PATH"
-# virtualenv
-export PATH="/opt/homebrew/bin/virtualenv:$PATH"
+# -----------------------------
+# Zsh Core Settings
+# -----------------------------
+# Colors
+autoload -Uz colors && colors
 
-# direnv
-export EDITOR=code
+# Keybindings (Emacs style)
+bindkey -e
 
-########################################
-# /export
-########################################
+# History
+HISTFILE=~/.zsh_history
+HISTSIZE=1000000
+SAVEHIST=1000000
+setopt extended_history
+setopt share_history
+setopt hist_ignore_all_dups
+setopt hist_ignore_space
+setopt hist_reduce_blanks
 
-########################################
-# alias
-########################################
+# Time format for history
+alias history='history -t "%F %T"'
 
+# Word Style
+autoload -Uz select-word-style
+select-word-style default
+zstyle ':zle:*' word-chars " /=;@:{},|"
+zstyle ':zle:*' word-style unspecified
+
+# -----------------------------
+# Completion
+# -----------------------------
+# Add homebrew completions to FPATH
+if type brew &>/dev/null; then
+  FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
+fi
+
+# Initialize completion (Once, robustly)
+autoload -Uz compinit
+if [ -n "${ZDOTDIR:-$HOME}/.zcompdump" ]; then
+  # Check if dump file is older than 24 hours
+  if [[ $(date +'%s') -gt $(date -r "${ZDOTDIR:-$HOME}/.zcompdump" +'%s') + 86400 ]]; then
+    compinit
+  else
+    compinit -C
+  fi
+else
+  compinit
+fi
+
+# Completion Options
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+zstyle ':completion:*' ignore-parents parent pwd ..
+zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin /usr/sbin /usr/bin /sbin /bin
+zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
+
+# -----------------------------
+# Options
+# -----------------------------
+setopt print_eight_bit
+setopt no_beep
+setopt no_flow_control
+setopt ignore_eof
+setopt interactive_comments
+setopt auto_cd
+setopt auto_pushd
+setopt pushd_ignore_dups
+setopt extended_glob
+
+# Keybinding for history search
+bindkey '^R' history-incremental-pattern-search-backward
+
+# -----------------------------
+# Plugins
+# -----------------------------
+
+# Syntax Highlighting
+if [ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+# Autosuggestions
+if [ -f /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
+  source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+fi
+
+# History Substring Search
+if [ -f ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh ]; then
+  source ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
+fi
+
+# Completions (Manual source if exists)
+if [ -f ~/.zsh/zsh-completions/zsh-completions.zsh ]; then
+  source ~/.zsh/zsh-completions/zsh-completions.zsh
+fi
+
+# Spaceship Prompt (Legacy? Kept just in case, but Starship overrides)
+if [ -f ~/.zsh/spaceship-prompt/spaceship-prompt.zsh ]; then
+  source ~/.zsh/spaceship-prompt/spaceship-prompt.zsh
+fi
+
+# Starship (Main Prompt)
+eval "$(starship init zsh)"
+
+# Rye
+source "$HOME/.rye/env"
+
+# Direnv
+eval "$(direnv hook zsh)"
+
+# -----------------------------
+# Aliases
+# -----------------------------
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
 alias mkdir='mkdir -p'
- 
-# sudo の後のコマンドでエイリアスを有効にする
 alias sudo='sudo '
- 
+
+# Pipe aliases
 alias -g L='| less'
 alias -g G='| grep'
 
-# alias ls='ls -GF'     # 元々これだった
+# List aliases (eza)
 alias list='ls'
+alias ls='eza --icons' # Override default ls
 alias l='eza --icons'
 alias la='eza -a --icons'
 alias ll='eza --icons --header --git --time-style=long-iso -agl'
 alias li='eza --icons -T -L 2 -a'
 
-# batコマンドをcatにエイリアス
+# Bat
 alias cat=bat
 
-# git
+# Git
 alias g="git"
 alias gg="git la"
 alias push="git push origin HEAD"
@@ -268,43 +179,31 @@ alias gc='anyframe-widget-checkout-git-branch'
 alias gd='delete-branch-incremental-search'
 alias pr='gh pr list | fzf | awk '\''{$1=$1};1'\'' | sed -e '\''s/ .*//'\'' | {read n} && gh pr view $n -w'
 
-# docker
+# Docker
 alias d="docker"
 
-# terraform
+# Terraform
 alias tf='terraform'
 alias tfp='terraform plan'
 alias tfa='terraform apply'
 
-# 画面解像度 出力
+# System
 alias resolution='system_profiler SPDisplaysDataType G Resolution'
 
-# tree
-# alias tree-a="tree -a -I "\.DS_Store|\.git|\.venv|\.vscode|\.pytest_cache|\__pycache__" -N"
-
-
-# C で標準出力をクリップボードにコピーする
-# mollifier delta blog : http://mollifier.hatenablog.com/entry/20100317/p1
+# Clipboard
 if which pbcopy >/dev/null 2>&1 ; then
-    # Mac
     alias -g C='| pbcopy'
 elif which xsel >/dev/null 2>&1 ; then
-    # Linux
     alias -g C='| xsel --input --clipboard'
 elif which putclip >/dev/null 2>&1 ; then
-    # Cygwin
     alias -g C='| putclip'
 fi
 
-########################################
-# /alias
-########################################
+# -----------------------------
+# Functions
+# -----------------------------
 
-########################################
-# functions
-########################################
-
-# 出力の後に改行を入れる
+# Add newline after command output
 function add_line {
   if [[ -z "${PS1_NEWLINE_LOGIN}" ]]; then
     PS1_NEWLINE_LOGIN=true
@@ -314,26 +213,18 @@ function add_line {
 }
 PROMPT_COMMAND='add_line'
 
-# --------------------------------------
-
-# git archive で納品するための関数
+# Git Archive
 function git_archive() {
-  # 現在の場所
   readonly local CURR_DIR=`\pwd`
-
-  # gitリポジトリのroot
   readonly local REPOSITORY_DIR=`\git rev-parse --show-toplevel 2> /dev/null`
 
-  # gitリポジトリかチェック
   if [ -z "${REPOSITORY_DIR}" ]; then
     echo '### This is not the repository root'
     return
   fi
 
-  # リポジトリrootにcd
   \cd ${REPOSITORY_DIR} > /dev/null
 
-  # .gitattributesの作成（存在していなかった場合）
   readonly local GIT_ATTRIBUTES_FILENAME='.gitattributes'
   if [ ! -f ${GIT_ATTRIBUTES_FILENAME} ]; then
   {
@@ -344,7 +235,6 @@ function git_archive() {
   } > ${GIT_ATTRIBUTES_FILENAME}
   fi
 
-  # リポジトリがcleanかチェック
   if [ -n "$(\git status --porcelain)" ]; then
     echo '### There are uncommited changes'
     \git status
@@ -352,21 +242,10 @@ function git_archive() {
     return
   fi
 
-  # ディレクトリ名取得，先頭のドットがあれば除去する
-  # readonly local REPOSITORY_DIRNAME=`echo $(\basename ${REPOSITORY_DIR}) | sed s:^[\.]*::`
   readonly local REPOSITORY_DIRNAME=`\basename $(git rev-parse --show-toplevel)`
-
-  # パス取得
   readonly local REPOSITORY_PARENT_DIR=`\dirname ${REPOSITORY_DIR}`
-
-  # ブランチ名取得
-  readonly local BRANCH_NAME=`echo $(\git symbolic-ref --short HEAD) | sed s:/:-:g`
-
-  # hash値取得
-  readonly local HASH=`\git rev-parse --short=7 HEAD`
-
-  # 納品!!
   readonly local TAR_NAME="${REPOSITORY_PARENT_DIR}/${REPOSITORY_DIRNAME}.tar.gz"
+  
   \git archive --format=tar.gz HEAD > ${TAR_NAME} && {
     echo '#========#'
     echo '# Result #'
@@ -374,25 +253,16 @@ function git_archive() {
     echo "Archived this repository as ${TAR_NAME}"
   }
 
-  # 元の場所に戻る
   \cd ${CURR_DIR} > /dev/null
 }
 
-# cd したら自動的に ls する
+# Auto ls on cd
 chpwd() {
 	if [[ $(pwd) != $HOME ]]; then;
 		la
 	fi
 }
 
-# --------------------------------------
+# Note: Removed redundant vcs_info hook as Starship handles prompt/git status.
 
-function _update_vcs_info_msg() {
-    LANG=en_US.UTF-8 vcs_info
-    RPROMPT="${vcs_info_msg_0_}"
-}
-add-zsh-hook precmd _update_vcs_info_msg
-
-########################################
-# /functions
-########################################
+TIMEFMT=$'\n\n========================\nProgram : %J\nCPU     : %P\nuser    : %*Us\nsystem  : %*Ss\ntotal   : %*Es\n========================\n'
