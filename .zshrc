@@ -21,7 +21,7 @@ export CLOUDSDK_PYTHON_SITEPACKAGES=1
 
 # Rancher Desktop (Managed Block)
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-export PATH="/Users/shibuya.keita/.rd/bin:$PATH"
+export PATH="$HOME/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
 
 # Other Tools
@@ -73,7 +73,7 @@ fi
 autoload -Uz compinit
 if [ -n "${ZDOTDIR:-$HOME}/.zcompdump" ]; then
   # Check if dump file is older than 24 hours
-  if [[ $(date +'%s') -gt $(date -r "${ZDOTDIR:-$HOME}/.zcompdump" +'%s') + 86400 ]]; then
+  if [[ $(date +'%s') -gt $(( $(date -r "${ZDOTDIR:-$HOME}/.zcompdump" +'%s') + 86400 )) ]]; then
     compinit
   else
     compinit -C
