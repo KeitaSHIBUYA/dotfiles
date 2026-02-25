@@ -137,6 +137,16 @@ else
 fi
 
 #=============================
+# source anyframe
+# Install: git clone https://github.com/mollifier/anyframe ~/.zsh/anyframe
+#=============================
+if [ -d ~/.zsh/anyframe ]; then
+  fpath=(~/.zsh/anyframe(N-/) $fpath)
+  autoload -Uz anyframe-init
+  anyframe-init
+fi
+
+#=============================
 # source zsh-history-substring-search
 #=============================
 if [ -f ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh ]; then
@@ -145,24 +155,10 @@ if [ -f ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh ]; 
   bindkey '^[[B' history-substring-search-down
 fi
 
-#=============================
-# source zsh-syntax-highlighting (must be last)
-#=============================
-if [ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
-  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-fi
-
 # Starship
 eval "$(starship init zsh)"
 
 
-# cloud-sql-proxy のエイリアス
-# alias cloud_sql_proxy="/opt/homebrew/share/google-cloud-sdk/bin/cloud_sql_proxy"
-
-
-# znap
-# source ~/app/zsh-snap/znap.zsh
-# znap source marlonrichert/zsh-autocomplete
 
 TIMEFMT=$'\n\n========================\nProgram : %J\nCPU     : %P\nuser    : %*Us\nsystem  : %*Ss\ntotal   : %*Es\n========================\n'
 
@@ -200,7 +196,8 @@ export PATH="$HOME/go/bin:$PATH"
 export PATH="/opt/homebrew/opt/curl/bin:$PATH"
 
 # editor
-export EDITOR=code
+export VISUAL=code
+export EDITOR=vim
 
 # Volta
 export VOLTA_HOME="$HOME/.volta"
@@ -212,6 +209,9 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # Mermaid CLI
 export PUPPETEER_EXECUTABLE_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+
+# PostgreSQL
+export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
 
 ########################################
 # /export
@@ -253,7 +253,7 @@ alias ta="tig --all"
 alias gr='anyframe-widget-cd-ghq-repository'
 alias gc='anyframe-widget-checkout-git-branch'
 alias gd='delete-branch-incremental-search'
-alias pr='gh pr list | fzf | awk '\''{$1=$1};1'\'' | sed -e '\''s/ .*//'\'' | {read n} && gh pr view $n -w'
+alias pr='gh pr list | fzf | awk '\''{print $1}'\'' | xargs gh pr view -w'
 
 # docker
 alias d="docker"
@@ -265,9 +265,6 @@ alias tfa='terraform apply'
 
 # 画面解像度 出力
 alias resolution='system_profiler SPDisplaysDataType | grep Resolution'
-
-# tree
-# alias tree-a="tree -a -I "\.DS_Store|\.git|\.venv|\.vscode|\.pytest_cache|\__pycache__" -N"
 
 
 # C で標準出力をクリップボードにコピーする
@@ -341,7 +338,7 @@ function git_archive() {
 
   # ディレクトリ名取得，先頭のドットがあれば除去する
   # local -r REPOSITORY_DIRNAME=$(echo $(\basename ${REPOSITORY_DIR}) | sed s:^[\.]*::)
-  local -r REPOSITORY_DIRNAME=$(\basename $(git rev-parse --show-toplevel))
+  local -r REPOSITORY_DIRNAME=$(\basename ${REPOSITORY_DIR})
 
   # パス取得
   local -r REPOSITORY_PARENT_DIR=$(\dirname ${REPOSITORY_DIR})
@@ -375,9 +372,15 @@ chpwd() {
 ########################################
 # /functions
 ########################################
-export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
 
 # Added by OrbStack: command-line tools and integration
 source ~/.orbstack/shell/init.zsh 2>/dev/null || :
+
+#=============================
+# source zsh-syntax-highlighting (must be last)
+#=============================
+if [ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
 
 # vim:set ft=zsh:
