@@ -23,15 +23,7 @@ SAVEHIST=1000000
 setopt extended_history
 alias history='history -t "%F %T"'
 
-# プロンプト
-# 1行表示
-# PROMPT="%~ %# "
-
-# 改変箇所_2
-PROMPT="%{${fg[blue]}%}%n:%{${reset_color}%} %c/ %# "
-# 2行表示
-# PROMPT="%{${fg[green]}%}[%n@%m]%{${reset_color}%} %~
-# %# " 
+# プロンプトは Starship が管理 (eval "$(starship init zsh)")
 
 # 単語の区切り文字を指定する
 autoload -Uz select-word-style
@@ -45,7 +37,6 @@ zstyle ':zle:*' word-style unspecified
 # 補完
 # 補完機能を有効にする
 autoload -Uz compinit
-compinit
 
 # 補完で小文字でも大文字にマッチさせる
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
@@ -60,13 +51,7 @@ zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
 # ps コマンドのプロセス名補完
 zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
 
-########################################
-# vcs_info
-autoload -Uz vcs_info
 autoload -Uz add-zsh-hook
-
-zstyle ':vcs_info:*' formats '%F{green}(%s)-[%b]%f'
-zstyle ':vcs_info:*' actionformats '%F{red}(%s)-[%b|%a]%f'
 
 ########################################
 # オプション
@@ -155,16 +140,16 @@ fi
 
 if type brew &>/dev/null; then
   FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
-
-  autoload -Uz compinit
-  compinit
 fi
+compinit
 
 #=============================
 # source zsh-history-substring-search
 #=============================
 if [ -f ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh ]; then
   source ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
+  bindkey '^[[A' history-substring-search-up
+  bindkey '^[[B' history-substring-search-down
 fi
 
 #=============================
@@ -189,7 +174,7 @@ eval "$(starship init zsh)"
 TIMEFMT=$'\n\n========================\nProgram : %J\nCPU     : %P\nuser    : %*Us\nsystem  : %*Ss\ntotal   : %*Es\n========================\n'
 
 # rye
-source "$HOME/.rye/env"
+[ -s "$HOME/.rye/env" ] && source "$HOME/.rye/env"
 
 # direnv
 eval "$(direnv hook zsh)"
@@ -211,7 +196,7 @@ export PATH="/Users/shibuya.keita/.rd/bin:$PATH"
 export LSCOLORS=cxfxcxdxbxegedabagacad
 
 # tfenv
-export PATH=$PATH:[パス]/.tfenv/bin
+export PATH=$PATH:$HOME/.tfenv/bin
 # Cloud SDK
 export PATH="/opt/homebrew/share/google-cloud-sdk/bin:$PATH"
 export CLOUDSDK_PYTHON_SITEPACKAGES=1
@@ -225,6 +210,17 @@ export PATH="/opt/homebrew/bin/virtualenv:$PATH"
 
 # direnv
 export EDITOR=code
+
+# Volta
+export VOLTA_HOME="$HOME/.volta"
+export PATH="$VOLTA_HOME/bin:$PATH"
+
+
+# Cursor CLI
+export PATH="$HOME/.local/bin:$PATH"
+
+# Mermaid CLI
+export PUPPETEER_EXECUTABLE_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 ########################################
 # /export
@@ -312,7 +308,7 @@ function add_line {
     printf '\n'
   fi
 }
-PROMPT_COMMAND='add_line'
+add-zsh-hook precmd add_line
 
 # --------------------------------------
 
@@ -385,14 +381,7 @@ chpwd() {
 	fi
 }
 
-# --------------------------------------
-
-function _update_vcs_info_msg() {
-    LANG=en_US.UTF-8 vcs_info
-    RPROMPT="${vcs_info_msg_0_}"
-}
-add-zsh-hook precmd _update_vcs_info_msg
-
 ########################################
 # /functions
 ########################################
+export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
