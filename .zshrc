@@ -121,6 +121,14 @@ fi
 
 FPATH=/opt/homebrew/share/zsh-completions:$FPATH
 
+#=============================
+# source anyframe
+# Install: git clone https://github.com/mollifier/anyframe ~/.zsh/anyframe
+#=============================
+if [ -d ~/.zsh/anyframe ]; then
+  fpath=(~/.zsh/anyframe(N-/) $fpath)
+fi
+
 autoload -Uz compinit
 _today=$(date +'%Y%j')
 case ${OSTYPE} in
@@ -138,23 +146,9 @@ else
 fi
 unset _today _dump_day
 
-#=============================
-# source anyframe
-# Install: git clone https://github.com/mollifier/anyframe ~/.zsh/anyframe
-#=============================
 if [ -d ~/.zsh/anyframe ]; then
-  fpath=(~/.zsh/anyframe(N-/) $fpath)
   autoload -Uz anyframe-init
   anyframe-init
-fi
-
-#=============================
-# source zsh-history-substring-search
-#=============================
-if [ -f ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh ]; then
-  source ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
-  bindkey "${terminfo[kcuu1]}" history-substring-search-up
-  bindkey "${terminfo[kcud1]}" history-substring-search-down
 fi
 
 # Starship
@@ -404,10 +398,19 @@ function delete-branch-incremental-search() {
 source ~/.orbstack/shell/init.zsh 2>/dev/null || :
 
 #=============================
-# source zsh-syntax-highlighting (must be last)
+# source zsh-syntax-highlighting (must be before zsh-history-substring-search)
 #=============================
 if [ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
   source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+#=============================
+# source zsh-history-substring-search (must be after zsh-syntax-highlighting)
+#=============================
+if [ -f ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh ]; then
+  source ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
+  bindkey "${terminfo[kcuu1]}" history-substring-search-up
+  bindkey "${terminfo[kcud1]}" history-substring-search-down
 fi
 
 # vim:set ft=zsh:
