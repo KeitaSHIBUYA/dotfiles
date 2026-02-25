@@ -120,21 +120,24 @@ if [ -f /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
   source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 fi
 
-#=============================
-# source zsh-completions
-#=============================
-if [ -f ~/.zsh/zsh-completions/zsh-completions.zsh ]; then
-  source ~/.zsh/zsh-completions/zsh-completions.zsh
-fi
-
 FPATH=/opt/homebrew/share/zsh-completions:$FPATH
 
 autoload -Uz compinit
-if [ $(date +'%j') != $(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null) ]; then
+_today=$(date +'%j')
+case ${OSTYPE} in
+  darwin*)
+    _dump_day=$(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)
+    ;;
+  linux*)
+    _dump_day=$(stat -c '%Y' ~/.zcompdump 2>/dev/null | xargs -I{} date -d @{} +'%j' 2>/dev/null)
+    ;;
+esac
+if [[ "$_today" != "$_dump_day" ]]; then
   compinit
 else
   compinit -C
 fi
+unset _today _dump_day
 
 #=============================
 # source anyframe
@@ -178,7 +181,7 @@ eval "$(direnv hook zsh)"
 ########################################
 
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-export PATH="/Users/shibuya.keita/.rd/bin:$PATH"
+export PATH="$HOME/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
 
 # LS_COLORS
@@ -232,15 +235,16 @@ alias sudo='sudo '
 alias -g L='| less'
 alias -g G='| grep'
 
-# alias ls='ls -GF'     # 元々これだった
-alias list='ls'
-alias l='eza --icons'
-alias la='eza -a --icons'
-alias ll='eza --icons --header --git --time-style=long-iso -agl'
-alias li='eza --icons -T -L 2 -a'
+if command -v eza >/dev/null 2>&1; then
+  alias l='eza --icons'
+  alias la='eza -a --icons'
+  alias ll='eza --icons --header --git --time-style=long-iso -agl'
+  alias li='eza --icons -T -L 2 -a'
+fi
 
-# batコマンドをcatにエイリアス
-alias cat=bat
+if command -v bat >/dev/null 2>&1; then
+  alias cat=bat
+fi
 
 # git
 alias g="git"
@@ -336,8 +340,7 @@ function git_archive() {
     return
   fi
 
-  # ディレクトリ名取得，先頭のドットがあれば除去する
-  # local -r REPOSITORY_DIRNAME=$(echo $(\basename ${REPOSITORY_DIR}) | sed s:^[\.]*::)
+  # ディレクトリ名取得
   local -r REPOSITORY_DIRNAME=$(\basename ${REPOSITORY_DIR})
 
   # パス取得
@@ -350,7 +353,7 @@ function git_archive() {
   local -r HASH=$(\git rev-parse --short=7 HEAD)
 
   # 納品!!
-  local -r TAR_NAME="${REPOSITORY_PARENT_DIR}/${REPOSITORY_DIRNAME}.tar.gz"
+  local -r TAR_NAME="${REPOSITORY_PARENT_DIR}/${REPOSITORY_DIRNAME}_${BRANCH_NAME}_${HASH}.tar.gz"
   \git archive --format=tar.gz HEAD > ${TAR_NAME} && {
     echo '#========#'
     echo '# Result #'
@@ -367,6 +370,23 @@ chpwd() {
 	if [[ $(pwd) != $HOME ]]; then
 		la
 	fi
+}
+
+# --------------------------------------
+
+# fzf でブランチを選択して削除する
+function delete-branch-incremental-search() {
+  local branch
+  branch=$(git branch | fzf --prompt="Delete branch > " --preview="git log --oneline --graph {1}" | sed 's/^[ *]*//')
+  if [[ -z "$branch" ]]; then
+    return
+  fi
+  echo "Delete branch: $branch"
+  read -q "REPLY?Are you sure? [y/N] "
+  echo
+  if [[ "$REPLY" == "y" ]]; then
+    git branch -d "$branch"
+  fi
 }
 
 ########################################
