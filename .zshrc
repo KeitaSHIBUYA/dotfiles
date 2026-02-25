@@ -304,10 +304,10 @@ add-zsh-hook precmd add_line
 # git archive で納品するための関数
 function git_archive() {
   # 現在の場所
-  local -r CURR_DIR=$(\pwd)
+  local -r CURR_DIR=$(command pwd)
 
   # gitリポジトリのroot
-  local -r REPOSITORY_DIR=$(\git rev-parse --show-toplevel 2> /dev/null)
+  local -r REPOSITORY_DIR=$(command git rev-parse --show-toplevel 2>/dev/null)
 
   # gitリポジトリかチェック
   if [ -z "${REPOSITORY_DIR}" ]; then
@@ -316,7 +316,7 @@ function git_archive() {
   fi
 
   # リポジトリrootにcd
-  \cd ${REPOSITORY_DIR} > /dev/null
+  command cd ${REPOSITORY_DIR} > /dev/null
 
   # .gitattributesの作成（存在していなかった場合）
   local -r GIT_ATTRIBUTES_FILENAME='.gitattributes'
@@ -330,28 +330,28 @@ function git_archive() {
   fi
 
   # リポジトリがcleanかチェック
-  if [ -n "$(\git status --porcelain)" ]; then
+  if [ -n "$(command git status --porcelain)" ]; then
     echo '### There are uncommited changes'
-    \git status
-    \cd ${CURR_DIR} > /dev/null
+    command git status
+    command cd ${CURR_DIR} > /dev/null
     return
   fi
 
   # ディレクトリ名取得
-  local -r REPOSITORY_DIRNAME=$(\basename ${REPOSITORY_DIR})
+  local -r REPOSITORY_DIRNAME=$(command basename ${REPOSITORY_DIR})
 
   # パス取得
-  local -r REPOSITORY_PARENT_DIR=$(\dirname ${REPOSITORY_DIR})
+  local -r REPOSITORY_PARENT_DIR=$(command dirname ${REPOSITORY_DIR})
 
   # ブランチ名取得
-  local -r BRANCH_NAME=$(echo $(\git symbolic-ref --short HEAD) | sed s:/:-:g)
+  local -r BRANCH_NAME=$(command git rev-parse --abbrev-ref HEAD | sed 's|/|-|g')
 
   # hash値取得
-  local -r HASH=$(\git rev-parse --short=7 HEAD)
+  local -r HASH=$(command git rev-parse --short=7 HEAD)
 
   # 納品!!
   local -r TAR_NAME="${REPOSITORY_PARENT_DIR}/${REPOSITORY_DIRNAME}_${BRANCH_NAME}_${HASH}.tar.gz"
-  \git archive --format=tar.gz HEAD > ${TAR_NAME} && {
+  command git archive --format=tar.gz HEAD > ${TAR_NAME} && {
     echo '#========#'
     echo '# Result #'
     echo '#========#'
@@ -359,7 +359,7 @@ function git_archive() {
   }
 
   # 元の場所に戻る
-  \cd ${CURR_DIR} > /dev/null
+  command cd ${CURR_DIR} > /dev/null
 }
 
 # cd したら自動的に ls する
@@ -378,7 +378,7 @@ chpwd() {
 # fzf でブランチを選択して削除する
 function delete-branch-incremental-search() {
   local branch
-  branch=$(git branch | fzf --prompt="Delete branch > " --preview="git log --oneline --graph \$(echo {} | sed 's/^[ *]*//')" | sed 's/^[ *]*//')
+  branch=$(git branch | sed 's/^[ *]*//' | fzf --prompt="Delete branch > " --preview="git log --oneline --graph {1}")
   if [[ -z "$branch" ]]; then
     return
   fi
