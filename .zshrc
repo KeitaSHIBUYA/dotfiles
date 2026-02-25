@@ -22,7 +22,7 @@ SAVEHIST=1000000
 setopt extended_history
 alias history='history -t "%F %T"'
 
-# プロンプトは Starship が管理 (eval "$(starship init zsh)")
+# プロンプトは Starship が管理（初期化は後述）
 
 # 単語の区切り文字を指定する
 autoload -Uz select-word-style
@@ -122,13 +122,13 @@ fi
 FPATH=/opt/homebrew/share/zsh-completions:$FPATH
 
 autoload -Uz compinit
-_today=$(date +'%j')
+_today=$(date +'%Y%j')
 case ${OSTYPE} in
   darwin*)
-    _dump_day=$(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)
+    _dump_day=$(stat -f '%Sm' -t '%Y%j' ~/.zcompdump 2>/dev/null)
     ;;
   linux*)
-    _dump_day=$(stat -c '%Y' ~/.zcompdump 2>/dev/null | xargs -I{} date -d @{} +'%j' 2>/dev/null)
+    _dump_day=$(stat -c '%Y' ~/.zcompdump 2>/dev/null | xargs -I{} date -d @{} +'%Y%j' 2>/dev/null)
     ;;
 esac
 if [[ "$_today" != "$_dump_day" ]]; then
@@ -153,8 +153,8 @@ fi
 #=============================
 if [ -f ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh ]; then
   source ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
-  bindkey '^[[A' history-substring-search-up
-  bindkey '^[[B' history-substring-search-down
+  bindkey "${terminfo[kcuu1]}" history-substring-search-up
+  bindkey "${terminfo[kcud1]}" history-substring-search-down
 fi
 
 # Starship
@@ -168,7 +168,9 @@ TIMEFMT=$'\n\n========================\nProgram : %J\nCPU     : %P\nuser    : %*
 [ -s "$HOME/.rye/env" ] && source "$HOME/.rye/env"
 
 # direnv
-eval "$(direnv hook zsh)"
+if command -v direnv >/dev/null 2>&1; then
+  eval "$(direnv hook zsh)"
+fi
 
 
 ########################################
@@ -187,12 +189,12 @@ export PATH="$HOME/.rd/bin:$PATH"
 export LSCOLORS=cxfxcxdxbxegedabagacad
 
 # tfenv
-export PATH=$PATH:$HOME/.tfenv/bin
+export PATH="$HOME/.tfenv/bin:$PATH"
 # Cloud SDK
 export PATH="/opt/homebrew/share/google-cloud-sdk/bin:$PATH"
 export CLOUDSDK_PYTHON_SITEPACKAGES=1
 # Go のパスを通す
-export PATH=$PATH:/usr/local/go/bin
+export PATH="/usr/local/go/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
 # Homebrew
 export PATH="/opt/homebrew/opt/curl/bin:$PATH"
@@ -253,8 +255,10 @@ alias pull="git pull -p"
 alias mkpr="git push origin HEAD && gh pr create && gh pr view --web"
 alias t="tig"
 alias ta="tig --all"
-alias gr='anyframe-widget-cd-ghq-repository'
-alias gc='anyframe-widget-checkout-git-branch'
+if [ -d ~/.zsh/anyframe ]; then
+  alias gr='anyframe-widget-cd-ghq-repository'
+  alias gc='anyframe-widget-checkout-git-branch'
+fi
 alias gd='delete-branch-incremental-search'
 alias pr='gh pr list | fzf | awk '\''{print $1}'\'' | xargs gh pr view -w'
 
@@ -366,7 +370,7 @@ function git_archive() {
 
 # cd したら自動的に ls する
 chpwd() {
-	if [[ $(pwd) != $HOME ]]; then
+	if [[ $PWD != $HOME ]]; then
 		if command -v eza >/dev/null 2>&1; then
 			la
 		else
@@ -380,7 +384,7 @@ chpwd() {
 # fzf でブランチを選択して削除する
 function delete-branch-incremental-search() {
   local branch
-  branch=$(git branch | fzf --prompt="Delete branch > " --preview="git log --oneline --graph {1}" | sed 's/^[ *]*//')
+  branch=$(git branch | fzf --prompt="Delete branch > " --preview="git log --oneline --graph \$(echo {} | sed 's/^[ *]*//')" | sed 's/^[ *]*//')
   if [[ -z "$branch" ]]; then
     return
   fi
