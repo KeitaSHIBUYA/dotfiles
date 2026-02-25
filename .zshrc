@@ -119,7 +119,7 @@ if [ -f /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
   source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 fi
 
-FPATH=/opt/homebrew/share/zsh-completions:$FPATH
+fpath=(/opt/homebrew/share/zsh-completions $fpath)
 
 #=============================
 # source anyframe
@@ -223,10 +223,10 @@ alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
 alias mkdir='mkdir -p'
- 
+
 # sudo の後のコマンドでエイリアスを有効にする
 alias sudo='sudo '
- 
+
 alias -g L='| less'
 alias -g G='| grep'
 
