@@ -18,20 +18,11 @@ HISTFILE=~/.zsh_history
 HISTSIZE=1000000
 SAVEHIST=1000000
 
-# 改変箇所_1
 # 時間表記の追加
 setopt extended_history
 alias history='history -t "%F %T"'
 
-# プロンプト
-# 1行表示
-# PROMPT="%~ %# "
-
-# 改変箇所_2
-PROMPT="%{${fg[blue]}%}%n:%{${reset_color}%} %c/ %# "
-# 2行表示
-# PROMPT="%{${fg[green]}%}[%n@%m]%{${reset_color}%} %~
-# %# " 
+# プロンプトは Starship が管理（初期化は後述）
 
 # 単語の区切り文字を指定する
 autoload -Uz select-word-style
@@ -43,9 +34,6 @@ zstyle ':zle:*' word-style unspecified
 
 ########################################
 # 補完
-# 補完機能を有効にする
-autoload -Uz compinit
-compinit
 
 # 補完で小文字でも大文字にマッチさせる
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
@@ -60,13 +48,7 @@ zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
 # ps コマンドのプロセス名補完
 zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
 
-########################################
-# vcs_info
-autoload -Uz vcs_info
 autoload -Uz add-zsh-hook
-
-zstyle ':vcs_info:*' formats '%F{green}(%s)-[%b]%f'
-zstyle ':vcs_info:*' actionformats '%F{red}(%s)-[%b|%a]%f'
 
 ########################################
 # オプション
@@ -129,15 +111,6 @@ case ${OSTYPE} in
 esac
 
 
-# vim:set ft=zsh:
-
-
-#=============================
-# source zsh-syntax-highlighting
-#=============================
-if [ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
-  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-fi
 
 #=============================
 # source zsh-autosuggestions
@@ -146,53 +119,52 @@ if [ -f /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
   source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 fi
 
+fpath=(/opt/homebrew/share/zsh-completions $fpath)
+
 #=============================
-# source zsh-completions
+# source anyframe
+# Install: git clone https://github.com/mollifier/anyframe ~/.zsh/anyframe
 #=============================
-if [ -f ~/.zsh/zsh-completions/zsh-completions.zsh ]; then
-  source ~/.zsh/zsh-completions/zsh-completions.zsh
+if [ -d ~/.zsh/anyframe ]; then
+  fpath=(~/.zsh/anyframe(N-/) $fpath)
 fi
 
-if type brew &>/dev/null; then
-  FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
-
-  autoload -Uz compinit
+autoload -Uz compinit
+_today=$(date +'%Y%j')
+case ${OSTYPE} in
+  darwin*)
+    _dump_day=$(stat -f '%Sm' -t '%Y%j' ~/.zcompdump 2>/dev/null)
+    ;;
+  linux*)
+    _dump_day=$(stat -c '%Y' ~/.zcompdump 2>/dev/null | xargs -I{} date -d @{} +'%Y%j' 2>/dev/null)
+    ;;
+esac
+if [[ "$_today" != "$_dump_day" ]]; then
   compinit
+else
+  compinit -C
 fi
+unset _today _dump_day
 
-#=============================
-# source zsh-history-substring-search
-#=============================
-if [ -f ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh ]; then
-  source ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
-fi
-
-#=============================
-# source spaceship-prompt
-#=============================
-if [ -f ~/.zsh/spaceship-prompt/spaceship-prompt.zsh ]; then
-  source ~/.zsh/spaceship-prompt/spaceship-prompt.zsh
+if [ -d ~/.zsh/anyframe ]; then
+  autoload -Uz anyframe-init
+  anyframe-init
 fi
 
 # Starship
 eval "$(starship init zsh)"
 
 
-# cloud-sql-proxy のエイリアス
-# alias cloud_sql_proxy="/opt/homebrew/share/google-cloud-sdk/bin/cloud_sql_proxy"
-
-
-# znap
-# source ~/app/zsh-snap/znap.zsh
-# znap source marlonrichert/zsh-autocomplete
 
 TIMEFMT=$'\n\n========================\nProgram : %J\nCPU     : %P\nuser    : %*Us\nsystem  : %*Ss\ntotal   : %*Es\n========================\n'
 
 # rye
-source "$HOME/.rye/env"
+[ -s "$HOME/.rye/env" ] && source "$HOME/.rye/env"
 
 # direnv
-eval "$(direnv hook zsh)"
+if command -v direnv >/dev/null 2>&1; then
+  eval "$(direnv hook zsh)"
+fi
 
 
 ########################################
@@ -204,27 +176,40 @@ eval "$(direnv hook zsh)"
 ########################################
 
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-export PATH="/Users/shibuya.keita/.rd/bin:$PATH"
+export PATH="$HOME/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
 
 # LS_COLORS
 export LSCOLORS=cxfxcxdxbxegedabagacad
 
 # tfenv
-export PATH=$PATH:[パス]/.tfenv/bin
+export PATH="$HOME/.tfenv/bin:$PATH"
 # Cloud SDK
 export PATH="/opt/homebrew/share/google-cloud-sdk/bin:$PATH"
 export CLOUDSDK_PYTHON_SITEPACKAGES=1
 # Go のパスを通す
-export PATH=$PATH:/usr/local/go/bin
+export PATH="/usr/local/go/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
 # Homebrew
 export PATH="/opt/homebrew/opt/curl/bin:$PATH"
-# virtualenv
-export PATH="/opt/homebrew/bin/virtualenv:$PATH"
 
-# direnv
-export EDITOR=code
+# editor
+export VISUAL=code
+export EDITOR=vim
+
+# Volta
+export VOLTA_HOME="$HOME/.volta"
+export PATH="$VOLTA_HOME/bin:$PATH"
+
+
+# Cursor CLI
+export PATH="$HOME/.local/bin:$PATH"
+
+# Mermaid CLI
+export PUPPETEER_EXECUTABLE_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+
+# PostgreSQL
+export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
 
 ########################################
 # /export
@@ -238,22 +223,23 @@ alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
 alias mkdir='mkdir -p'
- 
+
 # sudo の後のコマンドでエイリアスを有効にする
 alias sudo='sudo '
- 
+
 alias -g L='| less'
 alias -g G='| grep'
 
-# alias ls='ls -GF'     # 元々これだった
-alias list='ls'
-alias l='eza --icons'
-alias la='eza -a --icons'
-alias ll='eza --icons --header --git --time-style=long-iso -agl'
-alias li='eza --icons -T -L 2 -a'
+if command -v eza >/dev/null 2>&1; then
+  alias l='eza --icons'
+  alias la='eza -a --icons'
+  alias ll='eza --icons --header --git --time-style=long-iso -agl'
+  alias li='eza --icons -T -L 2 -a'
+fi
 
-# batコマンドをcatにエイリアス
-alias cat=bat
+if command -v bat >/dev/null 2>&1; then
+  alias cat=bat
+fi
 
 # git
 alias g="git"
@@ -263,10 +249,12 @@ alias pull="git pull -p"
 alias mkpr="git push origin HEAD && gh pr create && gh pr view --web"
 alias t="tig"
 alias ta="tig --all"
-alias gr='anyframe-widget-cd-ghq-repository'
-alias gc='anyframe-widget-checkout-git-branch'
+if [ -d ~/.zsh/anyframe ]; then
+  alias gr='anyframe-widget-cd-ghq-repository'
+  alias gc='anyframe-widget-checkout-git-branch'
+fi
 alias gd='delete-branch-incremental-search'
-alias pr='gh pr list | fzf | awk '\''{$1=$1};1'\'' | sed -e '\''s/ .*//'\'' | {read n} && gh pr view $n -w'
+alias pr='gh pr list | fzf | awk '\''{print $1}'\'' | xargs gh pr view -w'
 
 # docker
 alias d="docker"
@@ -277,21 +265,18 @@ alias tfp='terraform plan'
 alias tfa='terraform apply'
 
 # 画面解像度 出力
-alias resolution='system_profiler SPDisplaysDataType G Resolution'
-
-# tree
-# alias tree-a="tree -a -I "\.DS_Store|\.git|\.venv|\.vscode|\.pytest_cache|\__pycache__" -N"
+alias resolution='system_profiler SPDisplaysDataType | grep Resolution'
 
 
 # C で標準出力をクリップボードにコピーする
 # mollifier delta blog : http://mollifier.hatenablog.com/entry/20100317/p1
-if which pbcopy >/dev/null 2>&1 ; then
+if command -v pbcopy >/dev/null 2>&1; then
     # Mac
     alias -g C='| pbcopy'
-elif which xsel >/dev/null 2>&1 ; then
+elif command -v xsel >/dev/null 2>&1; then
     # Linux
     alias -g C='| xsel --input --clipboard'
-elif which putclip >/dev/null 2>&1 ; then
+elif command -v putclip >/dev/null 2>&1; then
     # Cygwin
     alias -g C='| putclip'
 fi
@@ -312,17 +297,17 @@ function add_line {
     printf '\n'
   fi
 }
-PROMPT_COMMAND='add_line'
+add-zsh-hook precmd add_line
 
 # --------------------------------------
 
 # git archive で納品するための関数
 function git_archive() {
   # 現在の場所
-  readonly local CURR_DIR=`\pwd`
+  local -r CURR_DIR=$(command pwd)
 
   # gitリポジトリのroot
-  readonly local REPOSITORY_DIR=`\git rev-parse --show-toplevel 2> /dev/null`
+  local -r REPOSITORY_DIR=$(command git rev-parse --show-toplevel 2>/dev/null)
 
   # gitリポジトリかチェック
   if [ -z "${REPOSITORY_DIR}" ]; then
@@ -331,10 +316,10 @@ function git_archive() {
   fi
 
   # リポジトリrootにcd
-  \cd ${REPOSITORY_DIR} > /dev/null
+  command cd ${REPOSITORY_DIR} > /dev/null
 
   # .gitattributesの作成（存在していなかった場合）
-  readonly local GIT_ATTRIBUTES_FILENAME='.gitattributes'
+  local -r GIT_ATTRIBUTES_FILENAME='.gitattributes'
   if [ ! -f ${GIT_ATTRIBUTES_FILENAME} ]; then
   {
     echo '*~ export-ignore'
@@ -345,29 +330,28 @@ function git_archive() {
   fi
 
   # リポジトリがcleanかチェック
-  if [ -n "$(\git status --porcelain)" ]; then
+  if [ -n "$(command git status --porcelain)" ]; then
     echo '### There are uncommited changes'
-    \git status
-    \cd ${CURR_DIR} > /dev/null
+    command git status
+    command cd ${CURR_DIR} > /dev/null
     return
   fi
 
-  # ディレクトリ名取得，先頭のドットがあれば除去する
-  # readonly local REPOSITORY_DIRNAME=`echo $(\basename ${REPOSITORY_DIR}) | sed s:^[\.]*::`
-  readonly local REPOSITORY_DIRNAME=`\basename $(git rev-parse --show-toplevel)`
+  # ディレクトリ名取得
+  local -r REPOSITORY_DIRNAME=$(command basename ${REPOSITORY_DIR})
 
   # パス取得
-  readonly local REPOSITORY_PARENT_DIR=`\dirname ${REPOSITORY_DIR}`
+  local -r REPOSITORY_PARENT_DIR=$(command dirname ${REPOSITORY_DIR})
 
   # ブランチ名取得
-  readonly local BRANCH_NAME=`echo $(\git symbolic-ref --short HEAD) | sed s:/:-:g`
+  local -r BRANCH_NAME=$(command git rev-parse --abbrev-ref HEAD | sed 's|/|-|g')
 
   # hash値取得
-  readonly local HASH=`\git rev-parse --short=7 HEAD`
+  local -r HASH=$(command git rev-parse --short=7 HEAD)
 
   # 納品!!
-  readonly local TAR_NAME="${REPOSITORY_PARENT_DIR}/${REPOSITORY_DIRNAME}.tar.gz"
-  \git archive --format=tar.gz HEAD > ${TAR_NAME} && {
+  local -r TAR_NAME="${REPOSITORY_PARENT_DIR}/${REPOSITORY_DIRNAME}_${BRANCH_NAME}_${HASH}.tar.gz"
+  command git archive --format=tar.gz HEAD > ${TAR_NAME} && {
     echo '#========#'
     echo '# Result #'
     echo '#========#'
@@ -375,24 +359,58 @@ function git_archive() {
   }
 
   # 元の場所に戻る
-  \cd ${CURR_DIR} > /dev/null
+  command cd ${CURR_DIR} > /dev/null
 }
 
 # cd したら自動的に ls する
 chpwd() {
-	if [[ $(pwd) != $HOME ]]; then;
-		la
+	if [[ $PWD != $HOME ]]; then
+		if command -v eza >/dev/null 2>&1; then
+			la
+		else
+			ls
+		fi
 	fi
 }
 
 # --------------------------------------
 
-function _update_vcs_info_msg() {
-    LANG=en_US.UTF-8 vcs_info
-    RPROMPT="${vcs_info_msg_0_}"
+# fzf でブランチを選択して削除する
+function delete-branch-incremental-search() {
+  local branch
+  branch=$(git branch | sed 's/^[ *]*//' | fzf --prompt="Delete branch > " --preview="git log --oneline --graph {1}")
+  if [[ -z "$branch" ]]; then
+    return
+  fi
+  echo "Delete branch: $branch"
+  read -q "REPLY?Are you sure? [y/N] "
+  echo
+  if [[ "$REPLY" == "y" ]]; then
+    git branch -d "$branch"
+  fi
 }
-add-zsh-hook precmd _update_vcs_info_msg
 
 ########################################
 # /functions
 ########################################
+
+# Added by OrbStack: command-line tools and integration
+source ~/.orbstack/shell/init.zsh 2>/dev/null || :
+
+#=============================
+# source zsh-syntax-highlighting (must be before zsh-history-substring-search)
+#=============================
+if [ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+#=============================
+# source zsh-history-substring-search (must be after zsh-syntax-highlighting)
+#=============================
+if [ -f ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh ]; then
+  source ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
+  bindkey "${terminfo[kcuu1]}" history-substring-search-up
+  bindkey "${terminfo[kcud1]}" history-substring-search-down
+fi
+
+# vim:set ft=zsh:
