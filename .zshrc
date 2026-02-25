@@ -18,7 +18,6 @@ HISTFILE=~/.zsh_history
 HISTSIZE=1000000
 SAVEHIST=1000000
 
-# 改変箇所_1
 # 時間表記の追加
 setopt extended_history
 alias history='history -t "%F %T"'
@@ -273,13 +272,13 @@ alias resolution='system_profiler SPDisplaysDataType | grep Resolution'
 
 # C で標準出力をクリップボードにコピーする
 # mollifier delta blog : http://mollifier.hatenablog.com/entry/20100317/p1
-if which pbcopy >/dev/null 2>&1 ; then
+if command -v pbcopy >/dev/null 2>&1; then
     # Mac
     alias -g C='| pbcopy'
-elif which xsel >/dev/null 2>&1 ; then
+elif command -v xsel >/dev/null 2>&1; then
     # Linux
     alias -g C='| xsel --input --clipboard'
-elif which putclip >/dev/null 2>&1 ; then
+elif command -v putclip >/dev/null 2>&1; then
     # Cygwin
     alias -g C='| putclip'
 fi
@@ -368,7 +367,11 @@ function git_archive() {
 # cd したら自動的に ls する
 chpwd() {
 	if [[ $(pwd) != $HOME ]]; then
-		la
+		if command -v eza >/dev/null 2>&1; then
+			la
+		else
+			ls
+		fi
 	fi
 }
 
