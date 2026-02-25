@@ -35,8 +35,6 @@ zstyle ':zle:*' word-style unspecified
 
 ########################################
 # 補完
-# 補完機能を有効にする
-autoload -Uz compinit
 
 # 補完で小文字でも大文字にマッチさせる
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
@@ -114,15 +112,6 @@ case ${OSTYPE} in
 esac
 
 
-# vim:set ft=zsh:
-
-
-#=============================
-# source zsh-syntax-highlighting
-#=============================
-if [ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
-  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-fi
 
 #=============================
 # source zsh-autosuggestions
@@ -138,10 +127,14 @@ if [ -f ~/.zsh/zsh-completions/zsh-completions.zsh ]; then
   source ~/.zsh/zsh-completions/zsh-completions.zsh
 fi
 
-if type brew &>/dev/null; then
-  FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
+FPATH=/opt/homebrew/share/zsh-completions:$FPATH
+
+autoload -Uz compinit
+if [ $(date +'%j') != $(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null) ]; then
+  compinit
+else
+  compinit -C
 fi
-compinit
 
 #=============================
 # source zsh-history-substring-search
@@ -153,10 +146,10 @@ if [ -f ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh ]; 
 fi
 
 #=============================
-# source spaceship-prompt
+# source zsh-syntax-highlighting (must be last)
 #=============================
-if [ -f ~/.zsh/spaceship-prompt/spaceship-prompt.zsh ]; then
-  source ~/.zsh/spaceship-prompt/spaceship-prompt.zsh
+if [ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
 # Starship
@@ -205,10 +198,8 @@ export PATH=$PATH:/usr/local/go/bin
 export PATH="$HOME/go/bin:$PATH"
 # Homebrew
 export PATH="/opt/homebrew/opt/curl/bin:$PATH"
-# virtualenv
-export PATH="/opt/homebrew/bin/virtualenv:$PATH"
 
-# direnv
+# editor
 export EDITOR=code
 
 # Volta
@@ -273,7 +264,7 @@ alias tfp='terraform plan'
 alias tfa='terraform apply'
 
 # 画面解像度 出力
-alias resolution='system_profiler SPDisplaysDataType G Resolution'
+alias resolution='system_profiler SPDisplaysDataType | grep Resolution'
 
 # tree
 # alias tree-a="tree -a -I "\.DS_Store|\.git|\.venv|\.vscode|\.pytest_cache|\__pycache__" -N"
@@ -315,10 +306,10 @@ add-zsh-hook precmd add_line
 # git archive で納品するための関数
 function git_archive() {
   # 現在の場所
-  readonly local CURR_DIR=`\pwd`
+  local -r CURR_DIR=$(\pwd)
 
   # gitリポジトリのroot
-  readonly local REPOSITORY_DIR=`\git rev-parse --show-toplevel 2> /dev/null`
+  local -r REPOSITORY_DIR=$(\git rev-parse --show-toplevel 2> /dev/null)
 
   # gitリポジトリかチェック
   if [ -z "${REPOSITORY_DIR}" ]; then
@@ -330,7 +321,7 @@ function git_archive() {
   \cd ${REPOSITORY_DIR} > /dev/null
 
   # .gitattributesの作成（存在していなかった場合）
-  readonly local GIT_ATTRIBUTES_FILENAME='.gitattributes'
+  local -r GIT_ATTRIBUTES_FILENAME='.gitattributes'
   if [ ! -f ${GIT_ATTRIBUTES_FILENAME} ]; then
   {
     echo '*~ export-ignore'
@@ -349,20 +340,20 @@ function git_archive() {
   fi
 
   # ディレクトリ名取得，先頭のドットがあれば除去する
-  # readonly local REPOSITORY_DIRNAME=`echo $(\basename ${REPOSITORY_DIR}) | sed s:^[\.]*::`
-  readonly local REPOSITORY_DIRNAME=`\basename $(git rev-parse --show-toplevel)`
+  # local -r REPOSITORY_DIRNAME=$(echo $(\basename ${REPOSITORY_DIR}) | sed s:^[\.]*::)
+  local -r REPOSITORY_DIRNAME=$(\basename $(git rev-parse --show-toplevel))
 
   # パス取得
-  readonly local REPOSITORY_PARENT_DIR=`\dirname ${REPOSITORY_DIR}`
+  local -r REPOSITORY_PARENT_DIR=$(\dirname ${REPOSITORY_DIR})
 
   # ブランチ名取得
-  readonly local BRANCH_NAME=`echo $(\git symbolic-ref --short HEAD) | sed s:/:-:g`
+  local -r BRANCH_NAME=$(echo $(\git symbolic-ref --short HEAD) | sed s:/:-:g)
 
   # hash値取得
-  readonly local HASH=`\git rev-parse --short=7 HEAD`
+  local -r HASH=$(\git rev-parse --short=7 HEAD)
 
   # 納品!!
-  readonly local TAR_NAME="${REPOSITORY_PARENT_DIR}/${REPOSITORY_DIRNAME}.tar.gz"
+  local -r TAR_NAME="${REPOSITORY_PARENT_DIR}/${REPOSITORY_DIRNAME}.tar.gz"
   \git archive --format=tar.gz HEAD > ${TAR_NAME} && {
     echo '#========#'
     echo '# Result #'
@@ -376,7 +367,7 @@ function git_archive() {
 
 # cd したら自動的に ls する
 chpwd() {
-	if [[ $(pwd) != $HOME ]]; then;
+	if [[ $(pwd) != $HOME ]]; then
 		la
 	fi
 }
@@ -388,3 +379,5 @@ export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
 
 # Added by OrbStack: command-line tools and integration
 source ~/.orbstack/shell/init.zsh 2>/dev/null || :
+
+# vim:set ft=zsh:
