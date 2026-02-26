@@ -1,5 +1,7 @@
 command_timeout = 3000
 
+right_format = "$git_branch"
+
 [battery]
 full_symbol = "• "
 charging_symbol = "⇡ "
