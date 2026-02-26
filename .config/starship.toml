@@ -19,12 +19,8 @@ symbol = "🧊 "
 [gcloud]
 disabled = true
 
-[git_branch]
-disabled = true
-
 [docker_context]
 disabled = true
 
 [terraform]
 disabled = true
-
