@@ -1,5 +1,7 @@
 command_timeout = 3000
 
+right_format = "$git_branch"
+
 [battery]
 full_symbol = "• "
 charging_symbol = "⇡ "
@@ -16,10 +18,10 @@ symbol = "[⬢](bold green) "
 [pulumi]
 symbol = "🧊 "
 
-[gcloud]
-disabled = true
-
 [git_branch]
+format = "[$symbol$branch]($style) "
+
+[gcloud]
 disabled = true
 
 [docker_context]
@@ -27,4 +29,3 @@ disabled = true
 
 [terraform]
 disabled = true
-
