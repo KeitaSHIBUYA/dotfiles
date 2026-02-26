@@ -18,6 +18,9 @@ symbol = "[⬢](bold green) "
 [pulumi]
 symbol = "🧊 "
 
+[git_branch]
+format = "[$symbol$branch]($style) "
+
 [gcloud]
 disabled = true
 
